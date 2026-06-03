@@ -7,11 +7,12 @@
   "scripts": {
     "dev": "vite",
     "electron:dev": "npm run build && set ALIYA_ELECTRON_DEV=1&& electron .",
-    "desktop:build": "npm run build && electron-builder --win nsis portable",
-    "desktop:build:dir": "npm run build && electron-builder --dir",
-    "desktop:pack:dir": "npm run build && node tools/package_electron_dir.mjs",
-    "desktop:build:linux": "npm run build && electron-builder --linux AppImage",
-    "desktop:build:mac": "npm run build && electron-builder --mac dmg",
+    "build:desktop": "cross-env ALIYA_SKIP_PUBLIC_COPY=1 vite build",
+    "desktop:build": "npm run build:desktop && electron-builder --win nsis portable",
+    "desktop:build:dir": "npm run build:desktop && electron-builder --dir",
+    "desktop:pack:dir": "npm run build:desktop && node tools/package_electron_dir.mjs",
+    "desktop:build:linux": "npm run build:desktop && electron-builder --linux AppImage",
+    "desktop:build:mac": "npm run build:desktop && electron-builder --mac dmg zip",
     "build": "vite build",
     "preview": "vite preview",
     "format": "biome format --write",
@@ -30,7 +31,8 @@
     "trace:diff:strict": "node tools/diff_unity_trace.mjs --strict-gameplay --strict-matched-path",
     "trace:matrix": "node tools/trace_matrix.mjs",
     "trace:matrix:strict": "node tools/trace_matrix.mjs --strict",
-    "trace:coverage": "node tools/audit_trace_coverage.mjs"
+    "trace:coverage": "node tools/audit_trace_coverage.mjs",
+    "audit:desktop-size": "node tools/audit_desktop_package_size.mjs"
   },
   "build": {
     "appId": "com.aliya.webdesktop",
@@ -49,6 +51,13 @@
         "to": "public"
       }
     ],
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "L0stInFades",
+        "repo": "aliya-web"
+      }
+    ],
     "win": {
       "target": [
         "nsis",
@@ -60,7 +69,10 @@
       "allowToChangeInstallationDirectory": true
     },
     "mac": {
-      "target": "dmg",
+      "target": [
+        "dmg",
+        "zip"
+      ],
       "category": "public.app-category.games"
     },
     "linux": {
@@ -70,6 +82,7 @@
   },
   "dependencies": {
     "@lucide/vue": "^1.17.0",
+    "electron-updater": "^6.8.3",
     "framework7": "^9.0.5",
     "framework7-icons": "^5.0.5",
     "framework7-vue": "^9.0.5",
@@ -80,6 +93,7 @@
   "devDependencies": {
     "@biomejs/biome": "^2.4.16",
     "@vitejs/plugin-vue": "^5.0.0",
+    "cross-env": "^7.0.3",
     "electron": "^40.9.3",
     "electron-builder": "^26.8.1",
     "playwright": "^1.60.0",

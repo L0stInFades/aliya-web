@@ -51,6 +51,16 @@ npm run dev -- --host 127.0.0.1 --port 3001
 
 Then open `http://127.0.0.1:3001/`.
 
+## Desktop Packaging
+
+Desktop builds keep the extracted assets in Electron `extraResources` and skip Vite's normal `public` directory copy. This avoids packaging the same assets once in `dist` and again under `resources/public`.
+
+```powershell
+npm run desktop:build:mac -- --arm64 --publish never
+```
+
+macOS builds produce both DMG and ZIP artifacts. The ZIP plus `latest-mac.yml` are required for long-term automatic updates through `electron-updater`; the DMG remains the first-install package.
+
 ## Current Runtime Coverage
 
 Implemented in Rust/WASM:

@@ -1,4 +1,5 @@
-const { app, BrowserWindow, net, protocol, shell } = require('electron')
+const { app, BrowserWindow, dialog, net, protocol, shell } = require('electron')
+const { autoUpdater } = require('electron-updater')
 const path = require('node:path')
 const fs = require('node:fs')
 const { pathToFileURL } = require('node:url')
@@ -43,7 +44,10 @@ function resolveAliyaPath(requestUrl) {
   const url = new URL(requestUrl)
   const relativePath = sanitizeUrlPath(url.pathname)
   if (relativePath.startsWith('assets/')) {
-    return path.join(distRoot, relativePath)
+    const distAssetPath = path.join(distRoot, relativePath)
+    if (fs.existsSync(distAssetPath)) {
+      return distAssetPath
+    }
   }
   return path.join(publicRoot, relativePath)
 }
@@ -98,10 +102,65 @@ function createWindow() {
   window.loadFile(path.join(distRoot, 'index.html'))
 }
 
+function registerUpdaterEvents() {
+  autoUpdater.logger = {
+    info: (message) => log(`updater info ${message}`),
+    warn: (message) => log(`updater warn ${message}`),
+    error: (message) => log(`updater error ${message}`),
+    debug: (message) => log(`updater debug ${message}`)
+  }
+
+  autoUpdater.autoDownload = true
+  autoUpdater.autoInstallOnAppQuit = true
+
+  autoUpdater.on('checking-for-update', () => log('updater checking-for-update'))
+  autoUpdater.on('update-available', (info) => log(`updater update-available ${info.version}`))
+  autoUpdater.on('update-not-available', (info) => log(`updater update-not-available ${info.version}`))
+  autoUpdater.on('download-progress', (progress) => {
+    log(`updater download-progress ${Math.round(progress.percent)}% ${progress.transferred}/${progress.total}`)
+  })
+  autoUpdater.on('update-downloaded', (info) => {
+    log(`updater update-downloaded ${info.version}`)
+    dialog
+      .showMessageBox({
+        type: 'info',
+        buttons: ['Restart', 'Later'],
+        defaultId: 0,
+        cancelId: 1,
+        title: 'Update Ready',
+        message: `Aliya ${info.version} has been downloaded.`,
+        detail: 'Restart the app to install the update.'
+      })
+      .then((result) => {
+        if (result.response === 0) {
+          autoUpdater.quitAndInstall()
+        }
+      })
+      .catch((error) => log(`updater dialog error ${error?.stack || error}`))
+  })
+  autoUpdater.on('error', (error) => log(`updater error-event ${error?.stack || error}`))
+}
+
+function checkForUpdates() {
+  if (!app.isPackaged) {
+    log('updater skipped because app is not packaged')
+    return
+  }
+  if (process.env.ALIYA_DISABLE_AUTO_UPDATE === '1') {
+    log('updater skipped by ALIYA_DISABLE_AUTO_UPDATE')
+    return
+  }
+  autoUpdater.checkForUpdatesAndNotify().catch((error) => {
+    log(`updater check failed ${error?.stack || error}`)
+  })
+}
+
 app.whenReady().then(() => {
   log('app ready')
   registerAssetProtocol()
+  registerUpdaterEvents()
   createWindow()
+  checkForUpdates()
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {

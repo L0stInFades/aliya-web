@@ -2,10 +2,18 @@ name: Build macOS Desktop
 
 on:
   workflow_dispatch:
+    inputs:
+      publish_release:
+        description: Publish a GitHub release when running on a tag
+        required: false
+        type: boolean
+        default: false
   push:
     branches:
       - main
       - master
+    tags:
+      - "v*"
     paths-ignore:
       - "**.md"
       - "*.log"
@@ -29,6 +37,7 @@ jobs:
 
     env:
       CSC_IDENTITY_AUTO_DISCOVERY: "false"
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
       - name: Checkout
@@ -46,10 +55,57 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build DMG
+      - name: Build macOS artifacts
         run: npm run desktop:build:mac -- --${{ matrix.arch }} --publish never
 
-      - name: Upload DMG
+      - name: Verify packaged app bundle
+        shell: bash
+        run: |
+          set -euo pipefail
+          APP_PATH="$(find release -maxdepth 2 -type d -name 'Aliya.app' -print -quit)"
+          if [[ -z "${APP_PATH}" ]]; then
+            echo "Aliya.app was not produced"
+            find release -maxdepth 3 -print
+            exit 1
+          fi
+          FRAMEWORK="${APP_PATH}/Contents/Frameworks/Electron Framework.framework/Electron Framework"
+          if [[ ! -f "${FRAMEWORK}" ]]; then
+            echo "Missing Electron Framework at ${FRAMEWORK}"
+            find "${APP_PATH}/Contents" -maxdepth 3 -print
+            exit 1
+          fi
+          test -f "${APP_PATH}/Contents/Resources/app.asar"
+          test -d "${APP_PATH}/Contents/Resources/public"
+          echo "Verified app bundle: ${APP_PATH}"
+
+      - name: Verify DMG contents
+        shell: bash
+        run: |
+          set -euo pipefail
+          DMG_PATH="$(find release -maxdepth 1 -type f -name '*.dmg' -print -quit)"
+          if [[ -z "${DMG_PATH}" ]]; then
+            echo "DMG was not produced"
+            exit 1
+          fi
+          MOUNT_DIR="$(mktemp -d)"
+          hdiutil attach "${DMG_PATH}" -mountpoint "${MOUNT_DIR}" -nobrowse -readonly
+          trap 'hdiutil detach "${MOUNT_DIR}" -quiet || true; rmdir "${MOUNT_DIR}" || true' EXIT
+          FRAMEWORK="${MOUNT_DIR}/Aliya.app/Contents/Frameworks/Electron Framework.framework/Electron Framework"
+          if [[ ! -f "${FRAMEWORK}" ]]; then
+            echo "DMG app is missing Electron Framework at ${FRAMEWORK}"
+            find "${MOUNT_DIR}" -maxdepth 5 -print
+            exit 1
+          fi
+          test -f "${MOUNT_DIR}/Aliya.app/Contents/Resources/app.asar"
+          test -d "${MOUNT_DIR}/Aliya.app/Contents/Resources/public"
+          echo "Verified DMG: ${DMG_PATH}"
+
+      - name: Summarize artifacts
+        shell: bash
+        run: |
+          find release -maxdepth 1 -type f \( -name "*.dmg" -o -name "*.zip" -o -name "*.blockmap" -o -name "latest-mac.yml" \) -print0 | xargs -0 ls -lh
+
+      - name: Upload macOS artifacts
         uses: actions/upload-artifact@v4
         with:
           name: Aliya-macos-${{ matrix.arch }}
@@ -57,4 +113,13 @@ jobs:
             release/*.dmg
             release/*.zip
             release/*.blockmap
+            release/latest-mac.yml
           if-no-files-found: error
+
+      - name: Publish GitHub release assets
+        if: matrix.arch == 'arm64' && startsWith(github.ref, 'refs/tags/') && (github.event_name != 'workflow_dispatch' || inputs.publish_release)
+        shell: bash
+        run: |
+          gh release view "${GITHUB_REF_NAME}" --repo "${GITHUB_REPOSITORY}" >/dev/null 2>&1 || \
+            gh release create "${GITHUB_REF_NAME}" --target "${GITHUB_SHA}" --title "Aliya ${GITHUB_REF_NAME}" --notes "Automated macOS release." --repo "${GITHUB_REPOSITORY}"
+          gh release upload "${GITHUB_REF_NAME}" release/*.dmg release/*.zip release/*.blockmap release/latest-mac.yml --clobber --repo "${GITHUB_REPOSITORY}"
