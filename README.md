@@ -2,6 +2,10 @@
 
 This is a local experimental web reconstruction of the installed Unity game. It uses extracted local assets and a Rust/WASM gameplay core, with Vue kept as the browser UI layer.
 
+## License
+
+This project is licensed under the PolyForm Noncommercial License 1.0.0. Commercial use is not permitted.
+
 ## What Is Extracted
 
 - `public/extracted/flowcharts.json`: Fungus Flowchart data exported from Unity prefabs.
