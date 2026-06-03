@@ -61,6 +61,8 @@ npm run desktop:build:mac -- --arm64 --publish never
 
 macOS builds produce both DMG and ZIP artifacts. The ZIP plus `latest-mac.yml` are required for long-term automatic updates through `electron-updater`; the DMG remains the first-install package.
 
+For a new macOS update, bump `package.json` version, commit it, tag the commit with `v<version>-macos-arm64`, and push the tag. GitHub Actions builds the DMG, ZIP, blockmaps, and `latest-mac.yml`, then uploads the arm64 assets to the matching GitHub Release. The workflow also verifies the Electron framework, updater config, app.asar contents, bundled public resources, and duplicate public asset audit.
+
 ## Current Runtime Coverage
 
 Implemented in Rust/WASM:

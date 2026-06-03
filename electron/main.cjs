@@ -3,6 +3,7 @@ const { autoUpdater } = require('electron-updater')
 const path = require('node:path')
 const fs = require('node:fs')
 const { pathToFileURL } = require('node:url')
+const { isInsideRoot, resolveAliyaPath } = require('./asset-paths.cjs')
 
 app.commandLine.appendSwitch('autoplay-policy', 'no-user-gesture-required')
 app.commandLine.appendSwitch('disable-features', 'PreloadMediaEngagementData,MediaEngagementBypassAutoplayPolicies')
@@ -34,28 +35,10 @@ protocol.registerSchemesAsPrivileged([
   }
 ])
 
-function sanitizeUrlPath(urlPath) {
-  const decoded = decodeURIComponent(urlPath)
-  const normalized = path.normalize(decoded).replace(/^(\.\.[/\\])+/, '')
-  return normalized.replace(/^[/\\]+/, '')
-}
-
-function resolveAliyaPath(requestUrl) {
-  const url = new URL(requestUrl)
-  const relativePath = sanitizeUrlPath(url.pathname)
-  if (relativePath.startsWith('assets/')) {
-    const distAssetPath = path.join(distRoot, relativePath)
-    if (fs.existsSync(distAssetPath)) {
-      return distAssetPath
-    }
-  }
-  return path.join(publicRoot, relativePath)
-}
-
 function registerAssetProtocol() {
   protocol.handle('aliya', async (request) => {
-    const filePath = resolveAliyaPath(request.url)
-    if (!filePath.startsWith(publicRoot) && !filePath.startsWith(distRoot)) {
+    const filePath = resolveAliyaPath(request.url, { publicRoot, distRoot })
+    if (!filePath || (!isInsideRoot(filePath, publicRoot) && !isInsideRoot(filePath, distRoot))) {
       return new Response('Forbidden', { status: 403 })
     }
     if (!fs.existsSync(filePath)) {

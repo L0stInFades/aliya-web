@@ -1,6 +1,6 @@
 {
   "name": "aliya-web",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "license": "PolyForm-Noncommercial-1.0.0",
   "main": "electron/main.cjs",
   "type": "module",
@@ -15,6 +15,7 @@
     "desktop:build:mac": "npm run build:desktop && electron-builder --mac dmg zip",
     "build": "vite build",
     "preview": "vite preview",
+    "test:aliya-protocol": "node tools/test_aliya_protocol_paths.mjs",
     "format": "biome format --write",
     "lint": "biome lint",
     "check": "biome check",
@@ -41,7 +42,7 @@
       "output": "release"
     },
     "files": [
-      "electron/main.cjs",
+      "electron/**/*.cjs",
       "dist/**/*",
       "package.json"
     ],

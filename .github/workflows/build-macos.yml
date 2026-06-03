@@ -57,8 +57,14 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Test desktop asset protocol
+        run: npm run test:aliya-protocol
+
       - name: Build macOS artifacts
         run: npm run desktop:build:mac -- --${{ matrix.arch }} --publish never
+
+      - name: Audit desktop package size
+        run: npm run audit:desktop-size
 
       - name: Verify packaged app bundle
         shell: bash
@@ -78,6 +84,12 @@ jobs:
           fi
           test -f "${APP_PATH}/Contents/Resources/app.asar"
           test -d "${APP_PATH}/Contents/Resources/public"
+          npx asar list "${APP_PATH}/Contents/Resources/app.asar" | grep -Fx "/electron/main.cjs"
+          npx asar list "${APP_PATH}/Contents/Resources/app.asar" | grep -Fx "/electron/asset-paths.cjs"
+          test -f "${APP_PATH}/Contents/Resources/app-update.yml"
+          grep -F "provider: github" "${APP_PATH}/Contents/Resources/app-update.yml"
+          grep -F "owner: L0stInFades" "${APP_PATH}/Contents/Resources/app-update.yml"
+          grep -F "repo: aliya-web" "${APP_PATH}/Contents/Resources/app-update.yml"
           echo "Verified app bundle: ${APP_PATH}"
 
       - name: Verify DMG contents
@@ -100,6 +112,7 @@ jobs:
           fi
           test -f "${MOUNT_DIR}/Aliya.app/Contents/Resources/app.asar"
           test -d "${MOUNT_DIR}/Aliya.app/Contents/Resources/public"
+          test -f "${MOUNT_DIR}/Aliya.app/Contents/Resources/app-update.yml"
           echo "Verified DMG: ${DMG_PATH}"
 
       - name: Summarize artifacts
