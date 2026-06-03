@@ -1,0 +1,15 @@
+﻿Key,Description,Standard,en-us
+BtnRestart_ILocalize,,初始化连接,Initialize Connection
+BtnQuit_ILocalize,,保存并关闭,Save and Close
+HintText_ILocalize,,注意：关闭后时间依旧继续流逝,Note: Time will continue to pass after closing
+InitializeHint_ILocalize,,你将重新开始，是否确认？,Confirm to restart from the beginning?
+RestartYesBtn_ILocalize,,是,Confirm
+RestartNoBtn_ILocalize,,否,No
+IsPlayInBackToggle,,音乐后台播放,BGM Playback
+DarkToggle,,深色,Dark Mode
+LightToggle,,浅色,Light Mode
+FontSizeTitle,,字体大小：,Font Size:
+SmallFontToggle,,小,S
+MiddleFontToggle,,中,M
+LargeFontToggle,,大,L
+DLCButton,,DLC,DLC

@@ -1,0 +1,17 @@
+node_modules/
+dist/
+release/
+
+wasm-core/target/
+
+.trace-analysis/
+.trace-matrix/
+unity-traces/
+
+*-report.json
+*-scan.json
+*-check.json
+*-coverage-examples.json
+*-matrix.json
+runtime-*
+*.log

@@ -1,0 +1,171 @@
+{
+  "generatedAt": "2026-06-03T03:49:42.356Z",
+  "sourceRoot": "E:\\SteamLibrary\\steamapps\\music\\AliyaSoundtrack",
+  "mappingEvidence": {
+    "method": "CG files were matched against extracted game message images by dimensions and 16x16 grayscale hash. Exact or nearest matches are recorded as gameImageId -> soundtrack CG.",
+    "imageIds": {
+      "1": "CG/CG01.png",
+      "2": "CG/CG02.png",
+      "3": "CG/CG04.png",
+      "4": "CG/CG03.png",
+      "5": "CG/CG06.jpg",
+      "6": "CG/CG05.png",
+      "7": "CG/CG07.png",
+      "8": "CG/CG08.png",
+      "9": "CG/CG09.png",
+      "10": "CG/CG10.png",
+      "11": "CG/CG11.png",
+      "12": "CG/CG12.png",
+      "13": "CG/CG13.png",
+      "14": "CG/CG14.png",
+      "15": "CG/CG15.png",
+      "16": "CG/CG16.png"
+    }
+  },
+  "cg": {
+    "1": {
+      "source": "E:\\SteamLibrary\\steamapps\\music\\AliyaSoundtrack\\CG\\CG01.png",
+      "path": "soundtrack/CG/1.png",
+      "bytes": 7635247
+    },
+    "2": {
+      "source": "E:\\SteamLibrary\\steamapps\\music\\AliyaSoundtrack\\CG\\CG02.png",
+      "path": "soundtrack/CG/2.png",
+      "bytes": 8919877
+    },
+    "3": {
+      "source": "E:\\SteamLibrary\\steamapps\\music\\AliyaSoundtrack\\CG\\CG04.png",
+      "path": "soundtrack/CG/3.png",
+      "bytes": 5169953
+    },
+    "4": {
+      "source": "E:\\SteamLibrary\\steamapps\\music\\AliyaSoundtrack\\CG\\CG03.png",
+      "path": "soundtrack/CG/4.png",
+      "bytes": 9273605
+    },
+    "5": {
+      "source": "E:\\SteamLibrary\\steamapps\\music\\AliyaSoundtrack\\CG\\CG06.jpg",
+      "path": "soundtrack/CG/5.jpg",
+      "bytes": 365203
+    },
+    "6": {
+      "source": "E:\\SteamLibrary\\steamapps\\music\\AliyaSoundtrack\\CG\\CG05.png",
+      "path": "soundtrack/CG/6.png",
+      "bytes": 1803504
+    },
+    "7": {
+      "source": "E:\\SteamLibrary\\steamapps\\music\\AliyaSoundtrack\\CG\\CG07.png",
+      "path": "soundtrack/CG/7.png",
+      "bytes": 16523862
+    },
+    "8": {
+      "source": "E:\\SteamLibrary\\steamapps\\music\\AliyaSoundtrack\\CG\\CG08.png",
+      "path": "soundtrack/CG/8.png",
+      "bytes": 14865734
+    },
+    "9": {
+      "source": "E:\\SteamLibrary\\steamapps\\music\\AliyaSoundtrack\\CG\\CG09.png",
+      "path": "soundtrack/CG/9.png",
+      "bytes": 4990068
+    },
+    "10": {
+      "source": "E:\\SteamLibrary\\steamapps\\music\\AliyaSoundtrack\\CG\\CG10.png",
+      "path": "soundtrack/CG/10.png",
+      "bytes": 12721763
+    },
+    "11": {
+      "source": "E:\\SteamLibrary\\steamapps\\music\\AliyaSoundtrack\\CG\\CG11.png",
+      "path": "soundtrack/CG/11.png",
+      "bytes": 7191817
+    },
+    "12": {
+      "source": "E:\\SteamLibrary\\steamapps\\music\\AliyaSoundtrack\\CG\\CG12.png",
+      "path": "soundtrack/CG/12.png",
+      "bytes": 14238284
+    },
+    "13": {
+      "source": "E:\\SteamLibrary\\steamapps\\music\\AliyaSoundtrack\\CG\\CG13.png",
+      "path": "soundtrack/CG/13.png",
+      "bytes": 7360605
+    },
+    "14": {
+      "source": "E:\\SteamLibrary\\steamapps\\music\\AliyaSoundtrack\\CG\\CG14.png",
+      "path": "soundtrack/CG/14.png",
+      "bytes": 5084441
+    },
+    "15": {
+      "source": "E:\\SteamLibrary\\steamapps\\music\\AliyaSoundtrack\\CG\\CG15.png",
+      "path": "soundtrack/CG/15.png",
+      "bytes": 5236812
+    },
+    "16": {
+      "source": "E:\\SteamLibrary\\steamapps\\music\\AliyaSoundtrack\\CG\\CG16.png",
+      "path": "soundtrack/CG/16.png",
+      "bytes": 7741046
+    }
+  },
+  "music": {
+    "Aliya": {
+      "source": "E:\\SteamLibrary\\steamapps\\music\\AliyaSoundtrack\\MP3\\1.Aliya.mp3",
+      "path": "soundtrack/music/1.Aliya.mp3",
+      "bytes": 988738
+    },
+    "Drift": {
+      "source": "E:\\SteamLibrary\\steamapps\\music\\AliyaSoundtrack\\MP3\\2.Drift.mp3",
+      "path": "soundtrack/music/2.Drift.mp3",
+      "bytes": 6002994
+    },
+    "Response": {
+      "source": "E:\\SteamLibrary\\steamapps\\music\\AliyaSoundtrack\\MP3\\3.Response.mp3",
+      "path": "soundtrack/music/3.Response.mp3",
+      "bytes": 7324581
+    },
+    "Letter": {
+      "source": "E:\\SteamLibrary\\steamapps\\music\\AliyaSoundtrack\\MP3\\4.Letter.mp3",
+      "path": "soundtrack/music/4.Letter.mp3",
+      "bytes": 4320918
+    },
+    "Astral Sunset": {
+      "source": "E:\\SteamLibrary\\steamapps\\music\\AliyaSoundtrack\\MP3\\5.Astral Sunset.mp3",
+      "path": "soundtrack/music/5.Astral Sunset.mp3",
+      "bytes": 4472637
+    },
+    "Stars' Annihilation": {
+      "source": "E:\\SteamLibrary\\steamapps\\music\\AliyaSoundtrack\\MP3\\6.Stars' Annihilation.mp3",
+      "path": "soundtrack/music/6.Stars' Annihilation.mp3",
+      "bytes": 7792979
+    },
+    "Tranquil Repose": {
+      "source": "E:\\SteamLibrary\\steamapps\\music\\AliyaSoundtrack\\MP3\\7.Tranquil Repose.mp3",
+      "path": "soundtrack/music/7.Tranquil Repose.mp3",
+      "bytes": 4438088
+    }
+  },
+  "wallpapers": [
+    {
+      "source": "E:\\SteamLibrary\\steamapps\\music\\AliyaSoundtrack\\Wallpaper\\1400x2810.png",
+      "path": "soundtrack/wallpaper/1400x2810.png",
+      "bytes": 2924388
+    },
+    {
+      "source": "E:\\SteamLibrary\\steamapps\\music\\AliyaSoundtrack\\Wallpaper\\3240x5760.jpg",
+      "path": "soundtrack/wallpaper/3240x5760.jpg",
+      "bytes": 3557958
+    },
+    {
+      "source": "E:\\SteamLibrary\\steamapps\\music\\AliyaSoundtrack\\Wallpaper\\3840x2160.png",
+      "path": "soundtrack/wallpaper/3840x2160.png",
+      "bytes": 6252801
+    },
+    {
+      "source": "E:\\SteamLibrary\\steamapps\\music\\AliyaSoundtrack\\Wallpaper\\5760x3240_CN.jpg",
+      "path": "soundtrack/wallpaper/5760x3240_CN.jpg",
+      "bytes": 4761969
+    },
+    {
+      "source": "E:\\SteamLibrary\\steamapps\\music\\AliyaSoundtrack\\Wallpaper\\5760x3240_EN.jpg",
+      "path": "soundtrack/wallpaper/5760x3240_EN.jpg",
+      "bytes": 4747287
+    }
+  ]
+}
