@@ -1,0 +1,15 @@
+{
+  "name": "aliya-wasm-core",
+  "type": "module",
+  "version": "0.1.0",
+  "files": [
+    "aliya_wasm_core_bg.wasm",
+    "aliya_wasm_core.js",
+    "aliya_wasm_core.d.ts"
+  ],
+  "main": "aliya_wasm_core.js",
+  "types": "aliya_wasm_core.d.ts",
+  "sideEffects": [
+    "./snippets/*"
+  ]
+}

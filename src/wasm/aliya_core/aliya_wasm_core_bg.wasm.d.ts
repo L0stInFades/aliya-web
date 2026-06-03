@@ -1,0 +1,31 @@
+/* tslint:disable */
+/* eslint-disable */
+export const memory: WebAssembly.Memory;
+export const __wbg_aliyaengine_free: (a: number, b: number) => void;
+export const aliyaengine_advance_time: (a: number, b: number) => [number, number];
+export const aliyaengine_choose: (a: number, b: number, c: number) => [number, number];
+export const aliyaengine_clear_clock_override: (a: number) => void;
+export const aliyaengine_continue_after_wait: (a: number) => [number, number];
+export const aliyaengine_debug_complete_interaction: (a: number, b: number, c: number) => [number, number];
+export const aliyaengine_debug_jump_daily_insert_to_index: (a: number, b: number, c: number, d: number, e: number, f: number) => [number, number];
+export const aliyaengine_debug_jump_to: (a: number, b: number, c: number, d: number, e: number) => [number, number];
+export const aliyaengine_debug_jump_to_index: (a: number, b: number, c: number, d: number, e: number, f: number) => [number, number];
+export const aliyaengine_debug_set_achievement: (a: number, b: number, c: number, d: number) => void;
+export const aliyaengine_debug_set_interaction_seed: (a: number, b: number, c: number, d: number, e: number) => void;
+export const aliyaengine_debug_set_variable: (a: number, b: number, c: number, d: number, e: number, f: number, g: number) => void;
+export const aliyaengine_interact: (a: number, b: number, c: number) => [number, number];
+export const aliyaengine_load_json: (a: number, b: number, c: number) => [number, number];
+export const aliyaengine_new: (a: number, b: number, c: number, d: number) => [number, number, number];
+export const aliyaengine_save_json: (a: number) => [number, number];
+export const aliyaengine_set_clock_override_ms: (a: number, b: number) => void;
+export const aliyaengine_start: (a: number) => [number, number];
+export const aliyaengine_state_json: (a: number) => [number, number];
+export const aliyaengine_submit_input: (a: number, b: number, c: number) => [number, number];
+export const aliyaengine_tick: (a: number, b: number) => [number, number];
+export const aliyaengine_tune_radio: (a: number, b: number) => [number, number];
+export const __wbindgen_externrefs: WebAssembly.Table;
+export const __wbindgen_free: (a: number, b: number, c: number) => void;
+export const __wbindgen_malloc: (a: number, b: number) => number;
+export const __wbindgen_realloc: (a: number, b: number, c: number, d: number) => number;
+export const __externref_table_dealloc: (a: number) => void;
+export const __wbindgen_start: () => void;

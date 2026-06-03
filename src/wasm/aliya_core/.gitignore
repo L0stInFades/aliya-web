@@ -1,0 +1,7 @@
+*
+!.gitignore
+!aliya_wasm_core_bg.wasm
+!aliya_wasm_core_bg.wasm.d.ts
+!aliya_wasm_core.d.ts
+!aliya_wasm_core.js
+!package.json
