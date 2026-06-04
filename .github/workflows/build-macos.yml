@@ -60,6 +60,15 @@ jobs:
       - name: Test desktop asset protocol
         run: npm run test:aliya-protocol
 
+      - name: Audit runtime features
+        run: npm run audit:runtime-features
+
+      - name: Smoke Electron runtime
+        run: npm run smoke:electron
+
+      - name: Smoke image preview
+        run: npm run smoke:image-preview
+
       - name: Build macOS artifacts
         run: npm run desktop:build:mac -- --${{ matrix.arch }} --publish never
 
@@ -86,6 +95,7 @@ jobs:
           test -d "${APP_PATH}/Contents/Resources/public"
           npx asar list "${APP_PATH}/Contents/Resources/app.asar" | grep -Fx "/electron/main.cjs"
           npx asar list "${APP_PATH}/Contents/Resources/app.asar" | grep -Fx "/electron/asset-paths.cjs"
+          npx asar list "${APP_PATH}/Contents/Resources/app.asar" | grep -Fx "/electron/preload.cjs"
           test -f "${APP_PATH}/Contents/Resources/app-update.yml"
           grep -F "provider: github" "${APP_PATH}/Contents/Resources/app-update.yml"
           grep -F "owner: L0stInFades" "${APP_PATH}/Contents/Resources/app-update.yml"

@@ -20,11 +20,29 @@
           :type="msg.type === 'player' ? 'sent' : 'received'"
           :name="msg.type === 'aliya' ? 'Aliya' : undefined"
           :avatar="msg.type === 'aliya' ? aliyaAvatar : undefined"
-          :image="msg.image"
           :text="msg.content ? formatMessage(msg.content) : undefined"
           :footer="formatTime(msg.timestamp)"
           :tail="true"
-        />
+        >
+          <template
+            v-if="msg.image"
+            #image
+          >
+            <button
+              class="message-image-button"
+              type="button"
+              title="查看图片"
+              @click.stop="openImage(msg.image)"
+            >
+              <img
+                :src="msg.image"
+                alt=""
+                loading="lazy"
+                decoding="async"
+              >
+            </button>
+          </template>
+        </f7-message>
       </template>
 
       <div class="choice-stack" v-if="choices.length > 0">
@@ -45,19 +63,32 @@
         <span></span>
       </div>
     </f7-messages>
+    <f7-photo-browser
+      ref="photoBrowser"
+      type="popup"
+      theme="dark"
+      :navbar="true"
+      :toolbar="false"
+      :swipe-to-close="true"
+      :photos="photoBrowserPhotos"
+      popup-close-link-text="完成"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
-import { nextTick, ref, watch } from 'vue'
+import { computed, nextTick, ref, watch } from 'vue'
 import { useGameStore } from '../stores/game'
 import { assetPath } from '../utils/assetPath'
 
 const store = useGameStore()
 const { messages, choices, isWaiting } = storeToRefs(store)
 const messagesContainer = ref<{ $el?: HTMLElement } | null>(null)
+const photoBrowser = ref<{ open?: (index?: number) => void } | null>(null)
 const aliyaAvatar = assetPath('extracted/images/2.png')
+const imageMessages = computed(() => messages.value.filter((message) => message.image))
+const photoBrowserPhotos = computed(() => imageMessages.value.map((message) => message.image ?? ''))
 
 function formatMessage(content: string): string {
   return content.replace(/\n/g, '<br>')
@@ -72,16 +103,20 @@ function selectChoice(choiceId: string) {
   store.selectChoice(choiceId)
 }
 
+function openImage(image: string) {
+  const index = imageMessages.value.findIndex((message) => message.image === image)
+  photoBrowser.value?.open?.(Math.max(0, index))
+}
+
 watch(
-  messages,
+  () => messages.value.length,
   async () => {
     await nextTick()
     const container = messagesContainer.value?.$el
     if (container) {
       container.scrollTop = container.scrollHeight
     }
-  },
-  { deep: true }
+  }
 )
 </script>
 
@@ -121,7 +156,7 @@ watch(
 }
 
 :global(.chat-window .message-bubble) {
-  max-width: min(78vw, 360px);
+  max-width: min(78vw, 430px);
   word-break: break-word;
   overflow-wrap: anywhere;
   box-shadow: none;
@@ -155,10 +190,31 @@ watch(
 }
 
 :global(.chat-window .message-image img) {
-  max-width: min(76vw, 340px);
-  max-height: 46vh;
+  max-width: min(76vw, 420px);
+  max-height: 52vh;
   border-radius: 14px;
   object-fit: contain;
+}
+
+.message-image-button {
+  display: block;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  cursor: zoom-in;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.message-image-button:active {
+  transform: scale(0.992);
+}
+
+.message-image-button img {
+  display: block;
+  width: auto;
+  height: auto;
 }
 
 :global(.chat-window .messages-title) {

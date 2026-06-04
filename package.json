@@ -1,6 +1,6 @@
 {
   "name": "aliya-web",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "license": "PolyForm-Noncommercial-1.0.0",
   "main": "electron/main.cjs",
   "type": "module",
@@ -33,6 +33,10 @@
     "trace:matrix": "node tools/trace_matrix.mjs",
     "trace:matrix:strict": "node tools/trace_matrix.mjs --strict",
     "trace:coverage": "node tools/audit_trace_coverage.mjs",
+    "profile:runtime": "node tools/profile_runtime.mjs",
+    "smoke:electron": "node tools/smoke_electron_runtime.mjs",
+    "smoke:image-preview": "node tools/smoke_image_preview.mjs",
+    "audit:runtime-features": "node tools/audit_runtime_features.mjs",
     "audit:desktop-size": "node tools/audit_desktop_package_size.mjs"
   },
   "build": {

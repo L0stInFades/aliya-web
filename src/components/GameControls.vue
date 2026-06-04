@@ -51,6 +51,7 @@
         <span>EH</span>
       </button>
       <button
+        v-if="showDeveloperTools"
         class="action-btn"
         :class="{ active: showSettings }"
         title="设置"
@@ -62,7 +63,7 @@
     </div>
 
     <div
-      v-if="showSettings"
+      v-if="showDeveloperTools && showSettings"
       class="settings-panel"
     >
       <label class="setting-row">
@@ -144,6 +145,38 @@
       >
         {{ audioError }}
       </p>
+      <div
+        v-if="isDesktop"
+        class="desktop-row"
+      >
+        <span>{{ desktopStatusLabel }}</span>
+        <button
+          type="button"
+          class="icon-text-btn"
+          :disabled="updateBusy"
+          title="检查更新"
+          @click="checkUpdates"
+        >
+          <RefreshCw :size="14" />
+          <span>检查</span>
+        </button>
+        <button
+          type="button"
+          class="icon-text-btn"
+          title="打开诊断"
+          @click="openDiagnostics"
+        >
+          <FolderOpen :size="14" />
+          <span>日志</span>
+        </button>
+      </div>
+      <div
+        v-if="diagnostics"
+        class="diagnostics-row"
+      >
+        <span>v{{ diagnostics.appVersion }}</span>
+        <span>{{ diagnostics.platform }} {{ diagnostics.arch }}</span>
+      </div>
     </div>
 
     <div
@@ -176,16 +209,23 @@
 </template>
 
 <script setup lang="ts">
-import { Gauge, Radio, Settings, Zap } from '@lucide/vue'
+import { FolderOpen, Gauge, Radio, RefreshCw, Settings, Zap } from '@lucide/vue'
 import { storeToRefs } from 'pinia'
-import { computed, nextTick, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useGameStore } from '../stores/game'
 
 const store = useGameStore()
-const { choices, isWaiting, gameState, audioSettings, soundtrackTracks, audioReady, audioError } = storeToRefs(store)
+const { choices, isWaiting, gameState, audioSettings, soundtrackTracks, audioReady, audioError } =
+  storeToRefs(store)
 const inputText = ref('')
 const inputEl = ref<HTMLTextAreaElement | null>(null)
 const showSettings = ref(false)
+const showDeveloperTools = import.meta.env.DEV || import.meta.env.VITE_ALIYA_DEBUG_UI === '1'
+const isDesktop = ref(window.aliyaDesktop?.isDesktop === true)
+const updateStatus = ref<AliyaUpdateStatus | null>(null)
+const diagnostics = ref<AliyaDiagnostics | null>(null)
+const updateBusy = ref(false)
+let removeUpdateListener: (() => void) | undefined
 const inputDisabled = computed(() => choices.value.length > 0 || isWaiting.value)
 const signalPercent = computed(() => Math.round(gameState.value.audio.radioMusicVolumePercent * 100))
 const targetPercent = computed(() => {
@@ -197,6 +237,30 @@ const placeholder = computed(() => {
   if (choices.value.length > 0) return '选择一条回复...'
   if (isWaiting.value) return 'Aliya 正在输入...'
   return 'iMessage'
+})
+const desktopStatusLabel = computed(() => {
+  const status = updateStatus.value ?? diagnostics.value?.update
+  if (!status) return '桌面诊断'
+  if (status.state === 'checking') return '正在检查更新'
+  if (status.state === 'available') return `发现 ${status.version ?? '新版本'}`
+  if (status.state === 'downloading') return `下载 ${status.percent ?? 0}%`
+  if (status.state === 'downloaded') return `${status.version ?? '更新'} 已就绪`
+  if (status.state === 'not-available') return '已是最新'
+  if (status.state === 'skipped') return '当前构建不检查'
+  if (status.state === 'error') return '更新检查失败'
+  return '桌面诊断'
+})
+
+onMounted(() => {
+  if (!showDeveloperTools || !window.aliyaDesktop) return
+  removeUpdateListener = window.aliyaDesktop.onUpdateStatus((status) => {
+    updateStatus.value = status
+  })
+  void refreshDiagnostics()
+})
+
+onUnmounted(() => {
+  removeUpdateListener?.()
 })
 
 function sendMessage() {
@@ -263,6 +327,27 @@ function setSoundtrackTrack(event: Event) {
 
 function testAudio() {
   void store.testAudio()
+}
+
+async function refreshDiagnostics() {
+  if (!window.aliyaDesktop) return
+  diagnostics.value = await window.aliyaDesktop.getDiagnostics()
+  updateStatus.value = diagnostics.value.update
+}
+
+async function checkUpdates() {
+  if (!window.aliyaDesktop || updateBusy.value) return
+  updateBusy.value = true
+  try {
+    updateStatus.value = await window.aliyaDesktop.checkForUpdates()
+    await refreshDiagnostics()
+  } finally {
+    updateBusy.value = false
+  }
+}
+
+function openDiagnostics() {
+  void window.aliyaDesktop?.openDiagnosticsFolder()
 }
 
 watch(inputText, () => {
@@ -416,6 +501,55 @@ watch(inputText, () => {
 
 .audio-row {
   grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.desktop-row {
+  min-height: 30px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 7px;
+  color: rgba(60, 60, 67, 0.78);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+.desktop-row > span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.diagnostics-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  color: rgba(60, 60, 67, 0.5);
+  font-size: 11px;
+  line-height: 15px;
+  font-variant-numeric: tabular-nums;
+}
+
+.icon-text-btn {
+  height: 30px;
+  min-width: 58px;
+  border: 0;
+  border-radius: 9px;
+  background: rgba(120, 120, 128, 0.16);
+  color: #007aff;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.icon-text-btn:disabled {
+  opacity: 0.48;
 }
 
 .setting-row input[type='range'] {
@@ -644,8 +778,18 @@ watch(inputText, () => {
   .setting-row,
   .toggle-row,
   .soundtrack-row,
-  .audio-row {
+  .audio-row,
+  .desktop-row {
     color: rgba(235, 235, 245, 0.72);
+  }
+
+  .diagnostics-row {
+    color: rgba(235, 235, 245, 0.48);
+  }
+
+  .icon-text-btn {
+    background: rgba(120, 120, 128, 0.24);
+    color: #0a84ff;
   }
 
   .setting-row output {

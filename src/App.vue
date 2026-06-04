@@ -16,6 +16,7 @@
         <ChatWindow />
         <ResourceBar />
         <GameControls />
+        <UpdateNotice />
       </f7-page>
     </div>
   </f7-app>
@@ -27,6 +28,7 @@ import ChatWindow from './components/ChatWindow.vue'
 import GameControls from './components/GameControls.vue'
 import GameHeader from './components/GameHeader.vue'
 import ResourceBar from './components/ResourceBar.vue'
+import UpdateNotice from './components/UpdateNotice.vue'
 import { useGameStore } from './stores/game'
 import { assetPath } from './utils/assetPath'
 
@@ -35,6 +37,7 @@ const backgroundImage = assetPath('extracted/images/Background_5.png')
 
 onMounted(() => {
   void store.init()
+  void store.unlockDesktopAudio()
   window.addEventListener('pointerdown', unlockAudioFromGesture, { capture: true })
   window.addEventListener('keydown', unlockAudioFromGesture, { capture: true })
   window.addEventListener('touchstart', unlockAudioFromGesture, { capture: true, passive: true })
@@ -61,7 +64,7 @@ function removeAudioUnlockListeners() {
 
 <style>
 .device-stage {
-  width: min(100vw, 430px, calc(100dvh * 0.48));
+  width: min(100vw, 520px, calc(100dvh * 0.58));
   margin: 0 auto;
   min-height: 100vh;
   height: 100dvh;

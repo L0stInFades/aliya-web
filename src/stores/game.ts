@@ -202,6 +202,7 @@ export const useGameStore = defineStore('game', () => {
   const initError = ref<string | null>(null)
   const audioReady = ref(false)
   const audioError = ref<string | null>(null)
+  const desktopAudioAutoplayAttempted = ref(false)
   const lastSaveAt = ref<number | null>(null)
   const lastOfflineSeconds = ref(0)
   const hasStarted = ref(false)
@@ -412,6 +413,12 @@ export const useGameStore = defineStore('game', () => {
       console.warn('Audio unlock failed', error)
       return false
     }
+  }
+
+  async function unlockDesktopAudio(): Promise<boolean> {
+    if (!window.aliyaDesktop?.isDesktop || desktopAudioAutoplayAttempted.value) return audioReady.value
+    desktopAudioAutoplayAttempted.value = true
+    return unlockAudio()
   }
 
   async function testAudio(): Promise<boolean> {
@@ -716,9 +723,11 @@ export const useGameStore = defineStore('game', () => {
       const [flowchartsText, localizationText, manifestData, soundtrackData] = await Promise.all([
         fetch(assetPath('extracted/flowcharts.json')).then((response) => response.text()),
         fetch(assetPath('extracted/localization.zh-cn.json')).then((response) => response.text()),
-        fetch(assetPath('extracted/manifest.json')).then((response) => response.json() as Promise<ExtractedManifest>),
+        fetch(assetPath('extracted/manifest.json')).then(
+          (response) => response.json() as Promise<ExtractedManifest>
+        ),
         fetch(assetPath('soundtrack/manifest.json'))
-          .then((response) => (response.ok ? response.json() as Promise<SoundtrackManifest> : null))
+          .then((response) => (response.ok ? (response.json() as Promise<SoundtrackManifest>) : null))
           .catch(() => null)
       ])
 
@@ -749,6 +758,7 @@ export const useGameStore = defineStore('game', () => {
           processEvents(nonResourceEvents)
         }
       }, 1000)
+      void unlockDesktopAudio()
       autoSaveTimer = window.setInterval(saveGame, 5000)
       window.addEventListener('beforeunload', handlePagePersist)
       window.addEventListener('pagehide', handlePagePersist)
@@ -795,6 +805,7 @@ export const useGameStore = defineStore('game', () => {
     initError,
     audioReady,
     audioError,
+    desktopAudioAutoplayAttempted,
     lastSaveAt,
     lastOfflineSeconds,
     o2Percent,
@@ -806,6 +817,7 @@ export const useGameStore = defineStore('game', () => {
     interact,
     tuneRadio,
     unlockAudio,
+    unlockDesktopAudio,
     testAudio,
     setAudioVolume,
     setBgmPlaysInBackground,

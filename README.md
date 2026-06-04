@@ -63,6 +63,26 @@ macOS builds produce both DMG and ZIP artifacts. The ZIP plus `latest-mac.yml` a
 
 For a new macOS update, bump `package.json` version, commit it, tag the commit with `v<version>-macos-arm64`, and push the tag. GitHub Actions builds the DMG, ZIP, blockmaps, and `latest-mac.yml`, then uploads the arm64 assets to the matching GitHub Release. The workflow also verifies the Electron framework, updater config, app.asar contents, bundled public resources, and duplicate public asset audit.
 
+Developer-only diagnostics are hidden from production builds. They appear only in Vite dev mode or when building with `VITE_ALIYA_DEBUG_UI=1`; the Electron main process still keeps local runtime logs and crash dumps under the app `userData` directory.
+
+Useful checks before a desktop release:
+
+```powershell
+npm run test:aliya-protocol
+npm run audit:runtime-features
+npm run smoke:electron
+npm run smoke:image-preview
+npm run audit:desktop-size
+npm run build:desktop
+```
+
+Runtime performance sampling serves the current `dist` with `public` fallback and writes `runtime-performance-report.json` plus `.trace-analysis/runtime-profile-trace.zip`:
+
+```powershell
+npm run build:desktop
+npm run profile:runtime
+```
+
 ## Current Runtime Coverage
 
 Implemented in Rust/WASM:
